@@ -1,6 +1,7 @@
-﻿using System;
+﻿using AdventOfCode2021.Helpers;
+using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace AdventOfCode2021.Solvers
 {
