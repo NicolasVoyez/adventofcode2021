@@ -87,5 +87,6 @@ namespace AdventOfCode2021.Solvers
         }
 
         public bool Question2CodeIsDone { get; } = true;
+        public bool TestOnly { get; } = false;
     }
 }

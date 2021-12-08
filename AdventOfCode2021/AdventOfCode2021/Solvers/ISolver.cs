@@ -13,5 +13,6 @@ namespace AdventOfCode2021.Solvers
 
         public string SolveSecondProblem(string firstProblemSolution);
         bool Question2CodeIsDone { get; }
+        bool TestOnly { get; }
     }
 }

@@ -57,16 +57,50 @@ namespace AdventOfCode2021
                 var input = File.ReadAllText(path);
                 ISolver solver = (ISolver)Assembly.GetAssembly(typeof(ISolver))?.GetType($"AdventOfCode2021.Solvers.SolverDay{num}")
                     ?.GetConstructor(new Type[0])?.Invoke(new object[0]);
+                ISolver testSolver = (ISolver)Assembly.GetAssembly(typeof(ISolver))?.GetType($"AdventOfCode2021.Solvers.SolverDay{num}")
+                    ?.GetConstructor(new Type[0])?.Invoke(new object[0]);
                 if (solver != null)
                 {
-                    var sw = Stopwatch.StartNew();
-                    solver.InitInput(input);
-                    var ex1 = solver.SolveFirstProblem();
+
+                    var testpath = $"./InputsTest/Input{num}.txt";
+                    string testInput = string.Empty;
+                    if (File.Exists(testpath))
+                    {
+                        testInput = File.ReadAllText(testpath);
+                        testSolver.InitInput(testInput);
+                    }
+
+                    if (!solver.TestOnly)
+                        solver.InitInput(input);
+
                     Console.WriteLine($"Solving exercice of day {num}");
-                    Console.WriteLine("Answer to exercice 1 is : " + ex1 + " ... (answer found in " + sw.ElapsedMilliseconds + " ms).");
-                    sw = Stopwatch.StartNew();
+                    string testAnswerEx1 = string.Empty;
+                    if (!string.IsNullOrEmpty(testInput))
+                    {
+                        testAnswerEx1 = testSolver.SolveFirstProblem();
+                        Console.WriteLine("Test Answer to exercice 1 is : " + testAnswerEx1);
+                    }
+
+                    string ex1 = null;
+                    var sw = Stopwatch.StartNew();
+                    if (!solver.TestOnly)
+                    {
+                        ex1 = solver.SolveFirstProblem();
+                        Console.WriteLine("Answer to exercice 1 is : " + ex1 + " ... (answer found in " + sw.ElapsedMilliseconds + " ms).");
+                        sw = Stopwatch.StartNew();
+                    }
                     if (solver.Question2CodeIsDone)
-                        Console.WriteLine("Answer to exercice 2 is : " + solver.SolveSecondProblem(ex1) + " ... (answer found in " + sw.ElapsedMilliseconds + " ms).");
+                    {
+                        string q2Result = null;
+                        if (!solver.TestOnly)
+                        {
+                            q2Result = "Answer to exercice 2 is : " + solver.SolveSecondProblem(ex1) + " ... (answer found in " + sw.ElapsedMilliseconds + " ms).";
+                        }
+                        if (!string.IsNullOrEmpty(testInput))
+                            Console.WriteLine("Test Answer to exercice 2 is : " + testSolver.SolveSecondProblem(testAnswerEx1));
+                        if (!string.IsNullOrEmpty(q2Result))
+                            Console.WriteLine(q2Result);
+                    }
                     Console.WriteLine();
                     return true;
                 }
