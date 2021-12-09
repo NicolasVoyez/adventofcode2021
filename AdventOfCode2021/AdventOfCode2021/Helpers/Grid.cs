@@ -17,8 +17,44 @@ namespace AdventOfCode2021.Helpers
                 X = x;
                 Value = value;
             }
-        }
 
+            public static bool operator ==(Cell<T> me, Cell<T> other)
+            {
+                if (ReferenceEquals(me.Value, null) && !ReferenceEquals(other.Value, null))
+                    return false;
+                if (!ReferenceEquals(me.Value, null) && ReferenceEquals(other.Value, null))
+                    return false;
+                if (ReferenceEquals(me.Value, null) && ReferenceEquals(other.Value, null))
+                    return me.X == other.X && me.Y == other.Y;
+
+                return me.Value.Equals(other.Value) && me.X == other.X && me.Y == other.Y;
+            }
+
+            public static bool operator !=(Cell<T> me, Cell<T> other)
+            {
+                return !(me == other);
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (!(obj is Cell<T> cell)) return false;
+                return this == cell;
+            }
+
+            public override int GetHashCode()
+            {
+                unchecked // Overflow is fine, just wrap
+                {
+                    int hash = 17;
+                    // Suitable nullity checks etc, of course :)
+                    hash = hash * 23 + X.GetHashCode();
+                    hash = hash * 23 + Y.GetHashCode();
+                    if (!ReferenceEquals(Value, null))
+                        hash = hash * 23 + Value.GetHashCode();
+                    return hash;
+                }
+            }
+        }
         // Y,X
         private readonly T[,] _innerGrid;
         public int YMax { get; }
@@ -62,18 +98,18 @@ namespace AdventOfCode2021.Helpers
         }
 
 
-        public IEnumerable<Cell<T>> Around(Cell<T> cell)
+        public IEnumerable<Cell<T>> Around(Cell<T> cell, bool withDiagonals = true)
         {
-            return Around(cell.Y, cell.X);
+            return Around(cell.Y, cell.X, withDiagonals);
         }
-        public IEnumerable<Cell<T>> Around(int y, int x)
+        public IEnumerable<Cell<T>> Around(int y, int x, bool withDiagonals = true)
         {
             if (y > 0)
             {
-                if (x > 0)
+                if (withDiagonals && x > 0 )
                     yield return this[y - 1, x - 1];
                 yield return this[y - 1, x];
-                if (x < XMax - 1)
+                if (withDiagonals && x < XMax - 1)
                     yield return this[y - 1, x + 1];
             }
 
@@ -85,10 +121,10 @@ namespace AdventOfCode2021.Helpers
 
             if (y < YMax - 1)
             {
-                if (x > 0)
+                if (withDiagonals && x > 0)
                     yield return this[y + 1, x - 1];
                 yield return this[y + 1, x];
-                if (x < XMax - 1)
+                if (withDiagonals && x < XMax - 1)
                     yield return this[y + 1, x + 1];
             }
         }
@@ -132,6 +168,19 @@ namespace AdventOfCode2021.Helpers
                 for (int x = 0; x < XMax; x++)
                 {
                     printElement(_innerGrid[y, x]);
+                }
+                Console.WriteLine();
+            }
+            Console.WriteLine();
+            Console.WriteLine();
+        }
+        public void Print(Action<Cell<T>> printElement)
+        {
+            for (int y = 0; y < YMax; y++)
+            {
+                for (int x = 0; x < XMax; x++)
+                {
+                    printElement(this[y, x]);
                 }
                 Console.WriteLine();
             }
