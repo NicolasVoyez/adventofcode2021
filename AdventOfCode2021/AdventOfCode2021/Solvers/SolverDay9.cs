@@ -66,6 +66,7 @@ namespace AdventOfCode2021.Solvers
         private int GetBassin(Grid<int>.Cell<int> point, IEnumerable<Grid<int>.Cell<int>> lowPoints)
         {
             HashSet<Grid<int>.Cell<int>> bassin = new HashSet<Grid<int>.Cell<int>>();
+            HashSet<Grid<int>.Cell<int>> enqueuedOnce = new HashSet<Grid<int>.Cell<int>>();
             Queue<Grid<int>.Cell<int>> todo = new Queue<Grid<int>.Cell<int>>();
             todo.Enqueue(point);
             while (todo.Count > 0)
@@ -75,12 +76,14 @@ namespace AdventOfCode2021.Solvers
                 bassin.Add(current);
                 foreach(var nextPt in _grid.Around(current, false))
                 {
+                    if (enqueuedOnce.Contains(nextPt)) continue;
                     if (nextPt.Value == 9) continue;
                     if (nextPt == point) continue;
                     if (lowPoints.Contains(nextPt)) return -1;
                     if (bassin.Contains(nextPt)) continue;
                     if (nextPt.Value < point.Value) continue;
 
+                    enqueuedOnce.Add(nextPt);
                     todo.Enqueue(nextPt);
                 }
             }
