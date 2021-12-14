@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace AdventOfCode2021.Helpers
 {
@@ -78,6 +79,7 @@ namespace AdventOfCode2021.Helpers
                 }
             }
         }
+
 
         public Grid(T[,] grid, int yMax, int xMax)
         {
